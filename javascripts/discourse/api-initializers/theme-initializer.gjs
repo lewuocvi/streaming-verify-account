@@ -87,9 +87,9 @@ export default apiInitializer((api) => {
     }
   };
 
-  const checkSubscription = async ({ username }) => {
+  const checkSubscription = async (currentUser) => {
     try {
-      if (!email) await getEmailFromBackend();
+      if (!email) await getEmailFromBackend(currentUser);
 
       const fetchSubscription = await fetch(`https://www-server.emmcvietnam.com/subscription/?email=${email}`);
       const { results } = await fetchSubscription.json();
