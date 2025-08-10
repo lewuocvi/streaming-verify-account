@@ -61,8 +61,8 @@ export default apiInitializer((api) => {
 
   const showNotification = async () => {
     const result = await Swal.fire({
-      title: "Tài khoản bị giới hạn",
-      text: "Bạn không thể sử dụng một số tính năng. Vui lòng liên hệ quản trị viên. Zalo 0979799247",
+      title: "Bạn phải mua gói dịch vụ trước để xem nọi dung.",
+      text: "Phí duy trì dịch vụ 1200k mỗi năm. Vui lòng liên hệ quản trị viên qua Zalo 0979799247",
       icon: "error",
       width: 800,
       allowOutsideClick: false,
