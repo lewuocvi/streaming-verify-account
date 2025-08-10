@@ -112,6 +112,8 @@ export default apiInitializer((api) => {
 
     if (verify) return;
 
+    hideContent();
+
     if (!currentUser) {
       await showLoginAlert();
       return;
