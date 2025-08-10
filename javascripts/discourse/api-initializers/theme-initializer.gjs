@@ -5,8 +5,6 @@ export default apiInitializer((api) => {
 
   const currentUser = api.getCurrentUser();
 
-  const context = new Map();
-
   const hasTargetTag = () => {
     const routeName = router.currentRouteName ?? "";
     if (!routeName.startsWith("topic")) return false;
@@ -81,21 +79,21 @@ export default apiInitializer((api) => {
 
   const checkSubscription = async ({ username }) => {
     try {
-      
-      if(!context.get("email")){
-        const fetchEmail = await fetch(`https://emmcvietnam.com/u/${username}/emails.json`, { credentials: "include" });
-        const { email } = await fetchEmail.json();
-        context.set("email", email)
-      }
+      const fetchEmail = await fetch(
+        `https://emmcvietnam.com/u/${username}/emails.json`,
+        { credentials: "include" }
+      );
 
-      const fetchSubscription = await fetch(`https://www-server.emmcvietnam.com/subscription/?email=${context.get("email")}`);
+      const { email } = await fetchEmail.json();
+
+      const fetchSubscription = await fetch(
+        `https://www-server.emmcvietnam.com/subscription/?email=${email}`
+      );
 
       const { results } = await fetchSubscription.json();
       const stillValid = results.some(({ end_time }) => {
         return new Date(end_time).getTime() > Date.now();
       });
-
-      context.set("verify", true);
 
       if (!stillValid) {
         await showNotification();
@@ -110,8 +108,6 @@ export default apiInitializer((api) => {
 
   const processPage = async () => {
     if (!hasTargetTag()) return;
-
-    if (context.get("verify") == true) return;
 
     hideContent();
 
