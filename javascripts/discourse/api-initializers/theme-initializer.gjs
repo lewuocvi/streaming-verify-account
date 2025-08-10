@@ -94,14 +94,14 @@ export default apiInitializer((api) => {
         return new Date(end_time).getTime() > Date.now();
       });
 
+      verify = true;
+
       if (!stillValid) {
         await showNotification();
         return;
       }
 
       showContent();
-
-      verify = true;
     } catch (error) {
       console.error("Lỗi khi kiểm tra subscription:", error);
     }
