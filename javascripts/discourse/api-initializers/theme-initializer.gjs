@@ -1,5 +1,8 @@
 import { apiInitializer } from "discourse/lib/api";
 
+let email = null;
+let verify = false;
+
 export default apiInitializer((api) => {
   const router = api.container.lookup("service:router");
 
@@ -79,21 +82,20 @@ export default apiInitializer((api) => {
 
   const checkSubscription = async ({ username }) => {
     try {
-      const fetchEmail = await fetch(
-        `https://emmcvietnam.com/u/${username}/emails.json`,
-        { credentials: "include" }
-      );
+      
+      if(!email){
+        const response = await fetch(`https://emmcvietnam.com/u/${username}/emails.json`, { credentials: "include" });
+        const jsonData = await response.json();
+        email = jsonData.email || null;
+      }
 
-      const { email } = await fetchEmail.json();
-
-      const fetchSubscription = await fetch(
-        `https://www-server.emmcvietnam.com/subscription/?email=${email}`
-      );
-
+      const fetchSubscription = await fetch(`https://www-server.emmcvietnam.com/subscription/?email=${email}`);
       const { results } = await fetchSubscription.json();
       const stillValid = results.some(({ end_time }) => {
         return new Date(end_time).getTime() > Date.now();
       });
+
+      verify = true;
 
       if (!stillValid) {
         await showNotification();
@@ -107,18 +109,18 @@ export default apiInitializer((api) => {
   };
 
   const processPage = async () => {
-    // if (!hasTargetTag()) return;
+    if (!hasTargetTag()) return;
 
-    // hideContent();
+    if(verify) return;
 
-    // if (!currentUser) {
-    //   await showLoginAlert();
-    //   return;
-    // }
+    hideContent();
 
-    // await checkSubscription(currentUser);
+    if (!currentUser) {
+      await showLoginAlert();
+      return;
+    }
 
-    console.log("load.load");
+    await checkSubscription(currentUser);
   };
 
   api.onAppEvent("page:loaded", processPage);
