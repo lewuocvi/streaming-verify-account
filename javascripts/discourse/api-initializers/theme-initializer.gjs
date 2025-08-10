@@ -1,7 +1,17 @@
 import { apiInitializer } from "discourse/lib/api";
 
 let email = null;
-let verify = false;
+let verify = null;
+
+export async function getEmailFromBackend({ username }) {
+  try {
+    const response = await fetch(`https://emmcvietnam.com/u/${username}/emails.json`, { credentials: "include" });
+    const jsonData = await response.json();
+    email = jsonData.email || null;
+  } catch (error) {
+    console.error({ error: error.message, stack: error.stack });
+  }
+}
 
 export default apiInitializer((api) => {
   const router = api.container.lookup("service:router");
@@ -51,10 +61,7 @@ export default apiInitializer((api) => {
       window.location.href = "/login";
     }
     //
-    else if (
-      result.isDismissed ||
-      result.dismiss === Swal.DismissReason.cancel
-    ) {
+    else if (result.isDismissed || result.dismiss === Swal.DismissReason.cancel) {
       showContent();
       window.history.back();
     }
@@ -82,12 +89,7 @@ export default apiInitializer((api) => {
 
   const checkSubscription = async ({ username }) => {
     try {
-      
-      if(!email){
-        const response = await fetch(`https://emmcvietnam.com/u/${username}/emails.json`, { credentials: "include" });
-        const jsonData = await response.json();
-        email = jsonData.email || null;
-      }
+      if (!email) await getEmailFromBackend();
 
       const fetchSubscription = await fetch(`https://www-server.emmcvietnam.com/subscription/?email=${email}`);
       const { results } = await fetchSubscription.json();
@@ -111,7 +113,7 @@ export default apiInitializer((api) => {
   const processPage = async () => {
     if (!hasTargetTag()) return;
 
-    if(verify) return;
+    if (verify == true || verify == false) return;
 
     hideContent();
 
