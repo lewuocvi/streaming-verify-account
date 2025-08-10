@@ -107,16 +107,18 @@ export default apiInitializer((api) => {
   };
 
   const processPage = async () => {
-    if (!hasTargetTag()) return;
+    // if (!hasTargetTag()) return;
 
-    hideContent();
+    // hideContent();
 
-    if (!currentUser) {
-      await showLoginAlert();
-      return;
-    }
+    // if (!currentUser) {
+    //   await showLoginAlert();
+    //   return;
+    // }
 
-    await checkSubscription(currentUser);
+    // await checkSubscription(currentUser);
+
+    console.log("load.load");
   };
 
   api.onAppEvent("page:loaded", processPage);
