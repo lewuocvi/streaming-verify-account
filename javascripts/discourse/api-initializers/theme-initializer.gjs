@@ -15,6 +15,8 @@ export default apiInitializer((api) => {
 
   const currentUser = api.getCurrentUser();
 
+  console.log({ currentUser });
+
   const hasTargetTag = () => {
     const routeName = router.currentRouteName ?? "";
     if (!routeName.startsWith("topic")) return false;
