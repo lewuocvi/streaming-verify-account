@@ -1,8 +1,5 @@
 import { apiInitializer } from "discourse/lib/api";
 
-let email = null;
-let verify = null;
-
 export async function getEmailFromBackend({ username }) {
   try {
     const response = await fetch(`https://emmcvietnam.com/u/${username}/emails.json`, { credentials: "include" });
@@ -42,7 +39,7 @@ export default apiInitializer((api) => {
 
   const showLoginAlert = async () => {
     const result = await Swal.fire({
-      title: "Yêu cầu đăng nhập",
+      title: "Nội dung này chỉ dành cho thành viên",
       text: "Bạn cần đăng nhập để xem bài viết này.",
       icon: "warning",
       confirmButtonText: "Tiếp tục",
@@ -87,33 +84,8 @@ export default apiInitializer((api) => {
     }
   };
 
-  const checkSubscription = async (currentUser) => {
-    try {
-      if (!email) await getEmailFromBackend(currentUser);
-
-      const fetchSubscription = await fetch(`https://www-server.emmcvietnam.com/subscription/?email=${email}`);
-      const { results } = await fetchSubscription.json();
-      const stillValid = results.some(({ end_time }) => {
-        return new Date(end_time).getTime() > Date.now();
-      });
-
-      verify = true;
-
-      if (!stillValid) {
-        await showNotification();
-        return;
-      }
-
-      showContent();
-    } catch (error) {
-      console.error("Lỗi khi kiểm tra subscription:", error);
-    }
-  };
-
   const processPage = async () => {
     if (!hasTargetTag()) return;
-
-    if (verify == true || verify == false) return;
 
     hideContent();
 
@@ -122,7 +94,9 @@ export default apiInitializer((api) => {
       return;
     }
 
-    await checkSubscription(currentUser);
+    if (!currentUser.groups.some((g) => g.name === "verified")) {
+      await showNotification();
+    }
   };
 
   api.onAppEvent("page:loaded", processPage);
