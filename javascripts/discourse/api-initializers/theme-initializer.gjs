@@ -100,6 +100,8 @@ export default apiInitializer((api) => {
     if (!currentUser.title === "verified") {
       await showNotification();
     }
+
+    showContent();
   };
 
   api.onAppEvent("page:loaded", processPage);
