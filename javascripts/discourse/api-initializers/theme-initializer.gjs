@@ -42,6 +42,7 @@ export default apiInitializer((api) => {
       title: "Nội dung này chỉ dành cho thành viên",
       text: "Bạn cần đăng nhập để xem bài viết này.",
       icon: "warning",
+      width: 800,
       confirmButtonText: "Tiếp tục",
       cancelButtonText: "Quay lại",
       showCancelButton: true,
