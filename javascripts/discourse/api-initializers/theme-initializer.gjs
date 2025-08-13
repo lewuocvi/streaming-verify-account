@@ -97,7 +97,7 @@ export default apiInitializer((api) => {
       return;
     }
 
-    if (!currentUser.groups.some((g) => g.name === "verified")) {
+    if (!currentUser.title === "verified") {
       await showNotification();
     }
   };
