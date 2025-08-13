@@ -1,15 +1,5 @@
 import { apiInitializer } from "discourse/lib/api";
 
-export async function getEmailFromBackend({ username }) {
-  try {
-    const response = await fetch(`https://emmcvietnam.com/u/${username}/emails.json`, { credentials: "include" });
-    const jsonData = await response.json();
-    email = jsonData.email || null;
-  } catch (error) {
-    console.error({ error: error.message, stack: error.stack });
-  }
-}
-
 export default apiInitializer((api) => {
   const router = api.container.lookup("service:router");
 
@@ -24,7 +14,17 @@ export default apiInitializer((api) => {
     const topicModel = api.container.lookup("controller:topic")?.model;
     if (!topicModel) return false;
 
-    return (topicModel.tags || []).includes("easyjtag-plus");
+    const tags = topicModel.tags || [];
+
+    for (const keywork of ["jtag", "ufi", "medusa", "f64", "mod-rom", "emmc", "ufs"]) {
+      for (const element of topicModel.tags || []) {
+        if (element.includes(keywork)) {
+          return element;
+        }
+      }
+    }
+
+    return false;
   };
 
   const hideContent = () => {
