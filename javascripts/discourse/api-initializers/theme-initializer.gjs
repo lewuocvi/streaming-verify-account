@@ -1,49 +1,41 @@
 import { apiInitializer } from "discourse/lib/api";
 
-export default apiInitializer((api) => {
+export default apiInitializer("1.19.0", (api) => {
   const router = api.container.lookup("service:router");
-
-  const currentUser = api.getCurrentUser();
-
-  console.log({ currentUser });
 
   const hasTargetTag = () => {
     const routeName = router.currentRouteName ?? "";
     if (!routeName.startsWith("topic")) return false;
 
     const topicModel = api.container.lookup("controller:topic")?.model;
-    if (!topicModel) return false;
+    if (!topicModel || !Array.isArray(topicModel.tags)) return false;
 
-    console.log(topicModel.tags);
+    const targetTags = ["jtag", "ufi", "medusa", "f64", "mod-rom", "emmc", "ufs"];
 
-    for (const keywork of ["jtag", "ufi", "medusa", "f64", "mod-rom", "emmc", "ufs"]) {
-      for (const element of topicModel.tags || []) {
-        console.log({ element });
-        if (element.includes(keywork)) {
-          return element;
-        }
-      }
-    }
-
-    return false;
+    return topicModel.tags.some((tag) => targetTags.some((keyword) => tag.toLowerCase().includes(keyword)));
   };
 
   api.decorateCooked(($elem, helper) => {
-    // 🔒 Kiểm tra quyền (ví dụ: nếu user chưa đăng nhập hoặc không phải staff)
-    const noAccess = hasTargetTag();
-    if (noAccess) {
-      // Xoá nội dung cũ
+    const currentUser = api.getCurrentUser();
+
+    const userIsVerified = currentUser?.title?.startsWith("Verified");
+    const topicHasTargetTag = hasTargetTag();
+
+    // Nếu user không verified và topic có tag cần khoá → chặn
+    if (!userIsVerified && topicHasTargetTag) {
       $elem.empty();
 
-      // Thêm thông báo cảnh báo
       $elem.append(`
-        <div class="no-access-warning" style="padding: 1em; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 6px; color: #856404;">
+        <div class="no-access-warning" style="
+          padding: 1em;
+          background: #fff3cd;
+          border: 1px solid #ffeeba;
+          border-radius: 6px;
+          color: #856404;
+        ">
           ⚠️ Bạn không có quyền xem nội dung của bài viết này.
         </div>
       `);
     }
   });
-
-  // api.onAppEvent("page:loaded", processPage);
-  // api.onPageChange(processPage);
 });
