@@ -30,7 +30,7 @@ export default apiInitializer((api) => {
 
   api.decorateCooked(($elem, helper) => {
     // 🔒 Kiểm tra quyền (ví dụ: nếu user chưa đăng nhập hoặc không phải staff)
-    const noAccess = !hasTargetTag();
+    const noAccess = hasTargetTag();
     if (noAccess) {
       // Xoá nội dung cũ
       $elem.empty();
