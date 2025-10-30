@@ -14,10 +14,11 @@ export default apiInitializer((api) => {
     const topicModel = api.container.lookup("controller:topic")?.model;
     if (!topicModel) return false;
 
-    const tags = topicModel.tags || [];
+    console.log(topicModel.tags);
 
     for (const keywork of ["jtag", "ufi", "medusa", "f64", "mod-rom", "emmc", "ufs"]) {
       for (const element of topicModel.tags || []) {
+        console.log({ element });
         if (element.includes(keywork)) {
           return element;
         }
