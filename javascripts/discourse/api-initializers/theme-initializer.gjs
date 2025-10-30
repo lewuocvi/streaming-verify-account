@@ -69,8 +69,8 @@ export default apiInitializer((api) => {
 
   const showNotification = async () => {
     const result = await Swal.fire({
-      title: "Tài khoản bị hạn chế do chưa đăng ký gói dịch vụ",
-      text: "Phí duy trì dịch vụ 1200k mỗi năm. Vui lòng liên hệ quản trị viên qua Zalo 0979799247",
+      title: "Tài khoản bị hạn chế",
+      text: "Vui lòng liên hệ quản trị viên qua Zalo 0979799247",
       icon: "error",
       width: 800,
       allowOutsideClick: false,
