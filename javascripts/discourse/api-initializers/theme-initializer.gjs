@@ -88,10 +88,12 @@ export default apiInitializer((api) => {
     }
   };
 
+  const redirect = () => {
+    location.href = "https://emmcvietnam.com/new";
+  }
+
   const processPage = async () => {
     if (!hasTargetTag()) return;
-
-    hideContent();
 
     if (!currentUser) {
       await showLoginAlert();
@@ -103,7 +105,7 @@ export default apiInitializer((api) => {
       return;
     }
 
-    showContent();
+    redirect();
   };
 
   api.onAppEvent("page:loaded", processPage);
